@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const Posts = require('../../models/PostSchema')
+const Chatlogs = require('../../models/ChatlogSchema')
 const path = require('path')
 const multer = require('multer')
 const storage = multer.diskStorage({
@@ -17,6 +18,7 @@ const uploads = multer({
 
 router.post('/post',uploads.single('image'),(req,res)=>{
             let imagePath = null
+            let exception = false
             if(req.file)
             {
                 imagePath = req.file.path
@@ -33,10 +35,21 @@ router.post('/post',uploads.single('image'),(req,res)=>{
 
            try {
                newPost.save()
-               res.send('new Post Saved')
            } catch (error) {
+               exception = true
                res.send('Error saving!', error)
                 fs.unlinkSync(imagePath)
+           }
+           if(!exception){
+               let newChatlogs = new Chatlogs({
+                   postId: newPost._id
+               })
+               
+               try {
+                   newChatlogs.save()
+               } catch (error) {
+                res.send('Error saving!', error)
+               }
            }
         }
     )

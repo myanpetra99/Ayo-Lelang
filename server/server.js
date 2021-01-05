@@ -8,20 +8,21 @@ const getPost = require('./routes/api/GetPost')
 const deletePost = require('./routes/api/DeletePost')
 const updatePost = require('./routes/api/UpdatePost')
 const RegisterUser = require('./routes/api/RegisterUser')
-const mongoose = require('mongoose')
+const LoginUser = require('./routes/api/LoginUser')
+const mongoose = require('mongoose') 
 const cors = require('cors')
 const passport = require('passport')
 const expresssession = require('express-session')
-
-
+const MongoStore = require('connect-mongo')(expresssession)
 mongoose.connect('mongodb+srv://mypdota99:ln1OHrcD0Maracjw@cluster0.eqrnl.mongodb.net/test',{
     useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true, useFindAndModify:false
 })
-
+const Chatlog = require('./models/ChatlogSchema')
+require('./config/PassportCfg')(passport)
 app.use('/public', express.static(`${__dirname}/public/`));
 app.use(express.json())
 app.use(cors())
-app.use(expresssession(({ secret: 'Beatles', resave: true, saveUninitialized: true })))
+app.use(expresssession(({ secret: 'Beatles', resave: true, saveUninitialized: true, store: new MongoStore({mongooseConnection : mongoose.connection}) })))
 app.use(passport.initialize())
 app.use(passport.session());
 
@@ -29,7 +30,9 @@ app.use('/api',createPost)
 app.use('/api',getPost)
 app.use('/api',deletePost)
 app.use('/api',updatePost)
-app.use('/register',RegisterUser)
+app.use(RegisterUser)
+app.use(LoginUser)
+
 
 app.get('/',( req, res) => {
     res.status(200).send('OK')

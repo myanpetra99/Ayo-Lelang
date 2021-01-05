@@ -4,7 +4,7 @@
              <router-link to="/"><img src="@/assets/logo2.png" alt="" class="brand"></router-link>
              <h3>register</h3>
        </div>
-       <form action="" v-on:submit.prevent>
+
            <div class="field">
     <input  class="input" type="text" name="firstName" id="firstName" v-model="firstname" placeholder="first name" required>
     <label for="firstName">first name</label>
@@ -34,7 +34,6 @@
         
         <app-button @click.native="register" class="login-btn">Register</app-button>
        
-        </form>
        
         <h2>or</h2>
 <div class="google-signin">
@@ -62,15 +61,13 @@ export default {
     name: 'RegisterCard',
     methods: {
         register : async function(){
-          let data = {};
-          data.firstname = this.firstname;
-          data.lastname = this.lastname;
-          data.email = this.email;
-          data.password = this.password2
+          let userData = {};
+          userData.firstname = this.firstname;
+          userData.lastname = this.lastname;
+          userData.email = this.email;
+          userData.password = this.password2
 
-            await postServices.register(data).then(this.$router.go('/login')).catch(error=>{
-              console.log(error)
-            })
+            await postServices.register(userData).then(this.$router.go('/login'))
         },
         validate : function(){
         this.password1 == this.password2 ? this.match = true : this.match = false

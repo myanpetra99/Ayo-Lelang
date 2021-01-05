@@ -28,10 +28,16 @@ class PostServices{
     }
 
     static async register(data){
-        return await axios.post(url+'/'+register,{data}).then(res => {
-            console.log(res)
-        })
+       return await axios.post('http://localhost:8081/register',data).then(res => {
+        console.log(res)
+    })
     }
+
+    static async login(data){
+        return await axios.post('http://localhost:8081/login',data).then(res => {
+         console.log(res)
+     })
+     }
 }
 
 export default PostServices;

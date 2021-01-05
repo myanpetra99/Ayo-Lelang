@@ -1,0 +1,18 @@
+POST http://localhost:8081/register
+Content-Type: application/json
+
+{
+    firstname : 'Michael',
+    lastname : 'Yan Petra',
+    email : 'myanpetra99@gmail.com',
+    password : 'Vinno2605'
+}
+
+###
+POST  http://localhost:8081/login
+Content-Type: application/json
+
+{
+    email : 'myanpetra99@gmail.com',
+    password : 'Vinno2605'
+}

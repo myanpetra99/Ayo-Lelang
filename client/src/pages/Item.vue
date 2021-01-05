@@ -12,7 +12,7 @@
 
          <app-button v-on:click.native="increment" :class="{disabled : pending}" >+ {{nextBid}}</app-button>
         <app-button v-on:click.native="bid" :class="{disabled : pending}" id="bidButton"> Bid Now</app-button>
-        
+        <input type="text" placeholder="your name" v-model="username">
         </div>
          <div id="rtBox">
            <h1>Realtime Bid</h1>
@@ -46,6 +46,7 @@ export default {
     name: 'item',
     data() {
         return {
+            username : '',
             item: {},
             socket: io(),
             id : this.$route.params.id,
@@ -69,7 +70,9 @@ export default {
         }
     },
     async mounted() {
-        this.item = await postServices.getOne(this.id)
+        let datas = await postServices.getOne(this.id)
+        this.item = datas.post
+        this.bidder = datas.chat.userlog
         this.nextBid = this.item.nextBid;
         this.currentPrice = this.item.currentPrice? this.item.currentPrice : this.item.startPrice;
         this.inputPrice = this.item.currentPrice? this.item.currentPrice : this.item.startPrice;
@@ -97,11 +100,12 @@ export default {
         bid: async function () {
             this.currentPrice = parseInt(this.inputPrice)
             let latestBid = {}
-            latestBid.user = 'Petra'
+            latestBid.user = this.username
             latestBid.price = parseInt(this.currentPrice)
-            this.$socket.emit('user-bid', latestBid)
-            await postServices.bid(this.id,latestBid.user,latestBid.price )
             var newTime = new Date();
+            latestBid.time = newTime
+            this.$socket.emit('user-bid', latestBid)
+            await postServices.bid(this.id,latestBid.user,latestBid.price, latestBid.time )
             newTime.setSeconds(newTime.getSeconds() + 60);
             localStorage.setItem('pending',newTime.getTime())
             this.pending = true;

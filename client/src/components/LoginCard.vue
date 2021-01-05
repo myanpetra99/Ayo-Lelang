@@ -5,11 +5,11 @@
        </div>
        <form action="">
              <div class="field">
-    <input type="email" name="email" id="email" placeholder="jane.appleseed@example.com">
+    <input type="email" name="email" id="email" placeholder="jane.appleseed@example.com" v-model="email">
     <label for="email">Email</label>
         </div>
         <div class="field">
-    <input type="password" name="password" id="password">
+    <input type="password" name="password" id="password" v-model="password">
     <label for="password">Password</label>
         </div>
         <app-button class="login-btn">Login</app-button>
@@ -24,14 +24,24 @@
 </template>
 
 <script>
+import PostServices from '../../services/PostServices';
 import AppButton from './AppButton.vue'
 export default {
   components: { AppButton },
     name: 'LoginCard',
+    data() {
+      return {
+        email : '',
+        password : ''
+      }
+    },
     methods: {
-        trigger : () => {
-            alert('works')
-        }
+       login : async function(){
+         let userData = {};
+          userData.email = this.email;
+          userData.password = this.password
+          await PostServices.login(userData).then(this.$router.go('/'))
+       }
     },
 }
 </script>
