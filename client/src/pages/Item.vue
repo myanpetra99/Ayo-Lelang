@@ -12,7 +12,7 @@
 
          <app-button v-on:click.native="increment" :class="{disabled : pending}" >+ {{nextBid}}</app-button>
         <app-button v-on:click.native="bid" :class="{disabled : pending}" id="bidButton"> Bid Now</app-button>
-        <input type="text" placeholder="your name" v-model="username">
+    <h5>My name : {{username}}</h5>
         </div>
          <div id="rtBox">
            <h1>Realtime Bid</h1>
@@ -73,6 +73,7 @@ export default {
         let datas = await postServices.getOne(this.id)
         this.item = datas.post
         this.bidder = datas.chat.userlog
+        this.username = datas.user.firstName + datas.user.lastName
         this.nextBid = this.item.nextBid;
         this.currentPrice = this.item.currentPrice? this.item.currentPrice : this.item.startPrice;
         this.inputPrice = this.item.currentPrice? this.item.currentPrice : this.item.startPrice;
