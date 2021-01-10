@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
-const PORT = process.env.PORT || 8081
+const dotenv = require('dotenv')
+dotenv.config()
+const PORT = process.env.PORT
 const http = require('http').Server(app)
 var io = require('socket.io')(http, { 'cors': { 'methods': ['GET', 'PATCH', 'POST', 'PUT'], 'origin': true } });
 const createPost = require('./routes/api/CreatePost')
@@ -9,22 +11,27 @@ const deletePost = require('./routes/api/DeletePost')
 const updatePost = require('./routes/api/UpdatePost')
 const RegisterUser = require('./routes/api/RegisterUser')
 const LoginUser = require('./routes/api/LoginUser')
+const UserProfile = require('./routes/api/UserProfile')
+const cookieparser = require('cookie-parser')
+const bodyparser = require('body-parser')
 const mongoose = require('mongoose') 
 const cors = require('cors')
-const passport = require('passport')
 const expresssession = require('express-session')
-const MongoStore = require('connect-mongo')(expresssession)
-mongoose.connect('mongodb+srv://mypdota99:ln1OHrcD0Maracjw@cluster0.eqrnl.mongodb.net/test',{
+
+mongoose.connect(process.env.MONGO_URI,{
     useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true, useFindAndModify:false
 })
 const Chatlog = require('./models/ChatlogSchema')
-require('./config/PassportCfg')(passport)
+app.use(cors({credentials: true, origin: 'http://localhost:8080'}))
+app.use(cookieparser())
+app.use(bodyparser.json())
+app.use(bodyparser.urlencoded({
+    extended: true
+  }));
+app.use(expresssession(({ secret: 'Beatles', resave: true, saveUninitialized: true,  })))
 app.use('/public', express.static(`${__dirname}/public/`));
-app.use(express.json())
-app.use(cors())
-app.use(expresssession(({ secret: 'Beatles', resave: true, saveUninitialized: true, store: new MongoStore({mongooseConnection : mongoose.connection}) })))
-app.use(passport.initialize())
-app.use(passport.session());
+
+
 
 app.use('/api',createPost)
 app.use('/api',getPost)
@@ -32,6 +39,7 @@ app.use('/api',deletePost)
 app.use('/api',updatePost)
 app.use(RegisterUser)
 app.use(LoginUser)
+app.use(UserProfile)
 
 
 app.get('/',( req, res) => {

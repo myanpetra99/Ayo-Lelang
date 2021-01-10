@@ -3,7 +3,7 @@
        <div class="header">
             <h1>Welcome </h1>
        </div>
-       <form action="">
+      
              <div class="field">
     <input type="email" name="email" id="email" placeholder="jane.appleseed@example.com" v-model="email">
     <label for="email">Email</label>
@@ -12,9 +12,8 @@
     <input type="password" name="password" id="password" v-model="password">
     <label for="password">Password</label>
         </div>
-        <app-button class="login-btn">Login</app-button>
-       
-        </form>
+        <app-button class="login-btn" @click.native="login">Login</app-button>
+      
        
         <h2>or</h2>
 <div class="google-signin">
@@ -24,7 +23,7 @@
 </template>
 
 <script>
-import PostServices from '../../services/PostServices';
+import AuthServices from '../../services/AuthServices';
 import AppButton from './AppButton.vue'
 export default {
   components: { AppButton },
@@ -40,7 +39,15 @@ export default {
          let userData = {};
           userData.email = this.email;
           userData.password = this.password
-          await PostServices.login(userData).then(this.$router.go('/'))
+          const token = await AuthServices.login(userData)
+          
+       if(!token){
+         console.log('error no token')
+       }else{
+           this.$cookies.set('TOKEN',token)
+        this.$store.dispatch('setAuth')
+       }
+          
        }
     },
 }

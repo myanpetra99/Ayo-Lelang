@@ -1,5 +1,5 @@
 const url = 'http://localhost:8081/api/post'
-
+import Vue from 'vue'
 class PostServices{
 
    static async getPost(){
@@ -26,18 +26,6 @@ class PostServices{
     static async bid(id,user,price){
         return await axios.put(url+'/'+id,{user: user, currentPrice : price})
     }
-
-    static async register(data){
-       return await axios.post('http://localhost:8081/register',data).then(res => {
-        console.log(res)
-    })
-    }
-
-    static async login(data){
-        return await axios.post('http://localhost:8081/login',data).then(res => {
-         console.log(res)
-     })
-     }
 }
 
 export default PostServices;

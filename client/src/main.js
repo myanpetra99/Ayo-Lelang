@@ -7,6 +7,9 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueSocketIO from 'vue-socket.io'
 import * as io from "socket.io-client";
+import VueCookies from 'vue-cookies'
+Vue.use(VueCookies)
+import store from './store/store'
 Vue.use(new VueSocketIO({
   debug: true,
   connection: io('http://localhost:8081'), //options object is Optional
@@ -14,8 +17,10 @@ Vue.use(new VueSocketIO({
 );
 
 Vue.config.productionTip = false
-
 Vue.use(VueAxios,axios);
+axios.defaults.withCredentials = true
+
+
 
 window.axios = require('axios')
 /* eslint-disable no-new */
@@ -23,5 +28,6 @@ new Vue({
   el: '#app',
   router,
   components: { App },
-  template: '<App/>'
+  template: '<App/>',
+  store: store
 })

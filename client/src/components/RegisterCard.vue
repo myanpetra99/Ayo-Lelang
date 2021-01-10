@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import postServices from '../../services/PostServices'
+import AuthServices from '../../services/AuthServices'
 import AppButton from './AppButton.vue'
 export default {
   components: { AppButton },
@@ -67,7 +67,7 @@ export default {
           userData.email = this.email;
           userData.password = this.password2
 
-            await postServices.register(userData).then(this.$router.go('/login'))
+            await AuthServices.register(userData).then(this.$router.go('/login'))
         },
         validate : function(){
         this.password1 == this.password2 ? this.match = true : this.match = false

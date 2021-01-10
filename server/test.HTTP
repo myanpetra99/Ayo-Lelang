@@ -2,10 +2,10 @@ POST http://localhost:8081/register
 Content-Type: application/json
 
 {
-    firstname : 'Michael',
-    lastname : 'Yan Petra',
-    email : 'myanpetra99@gmail.com',
-    password : 'Vinno2605'
+    firstname : 'Vinno',
+    lastname : 'Yunior',
+    email : 'mypgaming99@gmail.com',
+    password : 'Vinno260510'
 }
 
 ###

@@ -5,6 +5,8 @@ import Login from '@/pages/Login'
 import Item from '@/pages/Item'
 import Dashboard from '@/pages/Dashboard'
 import Register from '@/pages/Register'
+import User from '@/pages/User'
+import store from '../store/store'
 Vue.use(Router)
 
 export default new Router({
@@ -34,6 +36,18 @@ export default new Router({
       path: '/register',
       name: 'Register',
       component: Register
+    },
+    {
+      path: '/user',
+      name: 'User',
+      component: User,
+      beforeEnter : (to, from, next) => {
+        if(store.state.auth == false){
+          next('/login')
+        }else{
+          next()
+        }
+      }
     }
   ]
 })

@@ -4,20 +4,39 @@
             <router-link to="/"><img src="@/assets/logo2.png" alt="" class="brand"></router-link>
         </div>
         <div class="nav-item">
-           <router-link to="/register"><app-button class="btn-navbar fas fa-user-plus"> Sign Up </app-button></router-link>
+            <div v-if="verify">
+             <app-button class="btn-navbar fas fa-sign-out-alt" @click.native="logout"> Logout </app-button>
+            </div>
+         <div v-else>
+               <router-link to="/register"><app-button class="btn-navbar fas fa-user-plus"> Sign Up </app-button></router-link>
            <router-link to="/login"> <app-button class="btn-navbar fas fa-sign-in-alt" > Login   </app-button></router-link>
+         </div>
         </div>
     </div>
 </template>
 
 <script>
+import AuthServices from '../../services/AuthServices';
 import AppButton from "./AppButton.vue";
 
 export default {
     name: 'AppHeader',
     components:{
         AppButton
-    }
+    },
+    computed: {
+        verify(){
+            return this.$store.getters.getAuth
+        }
+    },
+    methods: {
+        async logout(){
+            await AuthServices.logout()
+             this.$cookies.remove('TOKEN')
+             this.$store.dispatch('setAuth')
+             this.$route.replace('/')
+        }
+    },
 }
 </script>
 
