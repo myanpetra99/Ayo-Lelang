@@ -20,12 +20,26 @@ export default new Router({
     {
       path: '/login',
       name: 'Login',
-      component: Login
+      component: Login,
+      beforeEnter : (to, from, next) => {
+        if(store.state.auth == false){
+          next()
+        }else{
+          next('/')
+        }
+      }
     },
     {
       path: '/item/:id',
       name: 'Item',
-      component: Item
+      component: Item,
+      beforeEnter : (to, from, next) => {
+        if(store.state.auth == false){
+          next('/login')
+        }else{
+          next()
+        }
+      }
     },
     {
       path: '/dashboard',
@@ -35,7 +49,14 @@ export default new Router({
     {
       path: '/register',
       name: 'Register',
-      component: Register
+      component: Register,
+      beforeEnter : (to, from, next) => {
+        if(store.state.auth == false){
+          next()
+        }else{
+          next('/')
+        }
+      }
     },
     {
       path: '/user',

@@ -30,7 +30,7 @@ router.post("/login", async (req, res) => {
     }
   });
 
-router.get('/logout',verifyToken, (req,res)=>{
+router.get('/logout', (req,res)=>{
      res.clearCookie('token')
      res.send('You just logged out')
 })

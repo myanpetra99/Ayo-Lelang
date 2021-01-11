@@ -8,7 +8,7 @@
          <h3 v-text="item.description"></h3>
          <h3>Starting Price : ${{item.startPrice}}</h3>
           <h1>Current price : ${{currentPrice}}</h1>
-         <input type="number"  v-model="inputPrice" :step="nextBid" id="inputBid" :min="this.currentPrice">
+         <input type="number"  v-model="inputPrice" :step="nextBid" id="inputBid" :min="this.currentPrice+nextBid">
 
          <app-button v-on:click.native="increment" :class="{disabled : pending}" >+ {{nextBid}}</app-button>
         <app-button v-on:click.native="bid" :class="{disabled : pending}" id="bidButton"> Bid Now</app-button>
@@ -18,13 +18,16 @@
            <h1>Realtime Bid</h1>
              <div id="rtBoxContent" v-if="bidder">
                
-               <div v-for="bid in bidder" class="notif-line">
-             <div class="name">
-                <p v-text="bid.user"></p>
-             </div>
-             <div class="message">
-                <p>Has bid for : ${{bid.price}}</p>
-             </div>
+               <div v-for="i in bidder.length" class="notif-line">
+                <div class="name">
+                  <p>{{ bidder[i-1].users.firstName }} {{ bidder[i-1].users.lastName }}</p>
+                </div>
+                 <div class="message">
+                   <p> Has bid for $ {{ bidder[i-1].userlog.bid }}</p>
+                </div>
+                 <div class="time">
+      
+                </div>
               
              </div>
            </div>
@@ -56,6 +59,16 @@ export default {
             pending: false,
             inputPrice : 0,
             bidder : [],
+            socketBid : {
+              users : {
+                firstName : '',
+                lastName : ''
+              },
+              userlog : {
+                bid : 0,
+                bidAt : null,
+              }
+            }
         }
     },
     sockets: {
@@ -65,18 +78,21 @@ export default {
         dataBid: function(data){
           console.log('Client Received Bid')
             this.bidder.push(data)
-            this.currentPrice = data.price
-            this.inputPrice = data.price
+            this.currentPrice = data.userlog.bid
+            this.inputPrice = data.userlog.bid
         }
     },
     async mounted() {
         let datas = await postServices.getOne(this.id)
+        console.log(datas.userLogs)
         this.item = datas.post
-        this.bidder = datas.chat.userlog
-        this.username = datas.user.firstName + datas.user.lastName
+        this.bidder = datas.userLogs
+        this.username = datas.user.firstName +' '+ datas.user.lastName
+        this.socketBid.users.firstName = datas.user.firstName
+        this.socketBid.users.lastName = datas.user.lastName
         this.nextBid = this.item.nextBid;
         this.currentPrice = this.item.currentPrice? this.item.currentPrice : this.item.startPrice;
-        this.inputPrice = this.item.currentPrice? this.item.currentPrice : this.item.startPrice;
+        this.inputPrice = this.item.currentPrice? this.item.currentPrice+this.item.nextBid : this.item.startPrice;
     },
     updated() {
         let oldTime = localStorage.getItem('pending')
@@ -103,10 +119,12 @@ export default {
             let latestBid = {}
             latestBid.user = this.username
             latestBid.price = parseInt(this.currentPrice)
+            this.socketBid.userlog.bid = parseInt(this.currentPrice)
+            this.socketBid.userlog.bidAt = Date.now()
             var newTime = new Date();
             latestBid.time = newTime
-            this.$socket.emit('user-bid', latestBid)
-            await postServices.bid(this.id,latestBid.user,latestBid.price, latestBid.time )
+            this.$socket.emit('user-bid', this.socketBid)
+            await postServices.bid(this.id,latestBid.user,latestBid.price)
             newTime.setSeconds(newTime.getSeconds() + 60);
             localStorage.setItem('pending',newTime.getTime())
             this.pending = true;
