@@ -10,6 +10,8 @@ import * as io from "socket.io-client";
 import VueCookies from 'vue-cookies'
 Vue.use(VueCookies)
 import store from './store/store'
+import VueSweetAlert2 from 'vue-sweetalert2'
+
 Vue.use(new VueSocketIO({
   debug: true,
   connection: io('http://localhost:8081'), //options object is Optional
@@ -23,6 +25,7 @@ axios.defaults.withCredentials = true
 
 
 window.axios = require('axios')
+Vue.use(VueSweetAlert2)
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

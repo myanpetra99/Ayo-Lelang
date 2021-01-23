@@ -139,12 +139,13 @@ label, .input {
   border-radius: 0;
   padding: 0;
   cursor: text;
-  
+  margin: 0 1em 0 1em;
 }
 
 .input:focus {
   outline: 0;
   border-bottom: 1px solid #666;
+   
 }
 
 label {
@@ -164,6 +165,7 @@ label {
   overflow: hidden;
   text-overflow: ellipsis;
   transform-origin: left bottom;
+  
 
 }
 /**
@@ -179,6 +181,7 @@ label {
 */
 .input:focus::-webkit-input-placeholder {
   opacity: 1;
+ 
 }
 /**
 * When the element is focused, remove the label transform.

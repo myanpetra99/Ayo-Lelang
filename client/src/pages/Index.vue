@@ -2,7 +2,9 @@
 <div>
  <App-header/>
  <h1>Barang Hari ini</h1>
+
 <div class="content">
+
   <div v-for="item in items" :key="item._id" >
     <a :href="'/item/'+item._id" class="card">
      <App-card  class="cardItem">
@@ -29,7 +31,6 @@ import AppCard from '@/components/AppCard'
 import postServices from '../../services/PostServices'
 import AppButton from '../components/AppButton.vue'
 export default {
-  
     name: 'Index',
     components: { AppHeader, AppCard, AppButton},
     data() {
@@ -65,8 +66,25 @@ export default {
        return hours + ':' + minutes + ' ' + meridian;
       },
       deletePost : async function(id) {
-        await postServices.deletePost(id)
-        this.items = await postServices.getPost().then(this.$router.replace('/'))
+         this.$swal({
+           icon: "error",
+          title: 'Warning',
+          text: 'Are you sure to delete? cannot be undone',
+          showCancelButton: true,
+          confirmButtonText: 'Delete now',
+          cancelButtonText: 'Cancel',
+          showCloseButton: true,
+          showLoaderOnConfirm: true
+        }).then( async (result) => {
+          if(result.value) {
+               this.$swal('Deleted', 'Post has been successfuly deleted', 'success')
+       
+             await postServices.deletePost(id).then(this.$router.go())
+               
+          }else{
+            this.$swal('Cancelled', 'Your file is still intact', 'info')
+          }
+        })
       }
     },
     updated() {

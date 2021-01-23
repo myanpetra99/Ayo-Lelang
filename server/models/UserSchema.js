@@ -21,6 +21,10 @@ const UserSchema = new mongoose.Schema({
         type : String,
         required : true
     },
+    image:{
+        type: String,
+        default: null
+    },
     address : {
         province : {
             type : String
@@ -35,9 +39,13 @@ const UserSchema = new mongoose.Schema({
             type : Number
         }
     },
-    verified :{
+    verified : {
         type : Boolean,
         default : false
+    },
+    role : {
+        type : String,
+        default : 'USER'
     },
     createdAt : {
         type : Date,

@@ -18,7 +18,7 @@
            <h1>Realtime Bid</h1>
              <div id="rtBoxContent" v-if="bidder">
                
-               <div v-for="i in bidder.length" class="notif-line">
+               <div v-for="i in bidder.length" :key="i" class="notif-line">
                 <div class="name">
                   <p>{{ bidder[i-1].users.firstName }} {{ bidder[i-1].users.lastName }}</p>
                 </div>
@@ -26,7 +26,7 @@
                    <p> Has bid for $ {{ bidder[i-1].userlog.bid }}</p>
                 </div>
                  <div class="time">
-      
+                   {{ bidder[i-1].userlog.bidAt }}
                 </div>
               
              </div>
@@ -84,18 +84,35 @@ export default {
     },
     async mounted() {
         let datas = await postServices.getOne(this.id)
-        console.log(datas.userLogs)
-        this.item = datas.post
-        this.bidder = datas.userLogs
-        this.username = datas.user.firstName +' '+ datas.user.lastName
-        this.socketBid.users.firstName = datas.user.firstName
-        this.socketBid.users.lastName = datas.user.lastName
-        this.nextBid = this.item.nextBid;
-        this.currentPrice = this.item.currentPrice? this.item.currentPrice : this.item.startPrice;
-        this.inputPrice = this.item.currentPrice? this.item.currentPrice+this.item.nextBid : this.item.startPrice;
+        if (datas.user.verified == false) {
+          this.$swal({
+           icon: "error",
+          title: 'Oops',
+          text: 'Please verify your account before continue',
+          showCancelButton: true,
+          confirmButtonText: 'I want to verify now!',
+          cancelButtonText: 'Later',
+          showCloseButton: true,
+          showLoaderOnConfirm: true
+        }).then((result) => {
+          if(result.value) {
+            this.$router.push({name : 'User'})
+          }
+        })
+          this.$router.push({ name: 'Index', params: { initialError: 'Please Verify your account' }})
+        } else {
+          this.item = datas.post
+          this.bidder = datas.userLogs
+          this.username = datas.user.firstName +' '+ datas.user.lastName
+          this.socketBid.users.firstName = datas.user.firstName
+          this.socketBid.users.lastName = datas.user.lastName
+          this.nextBid = this.item.nextBid;
+          this.currentPrice = this.item.currentPrice? this.item.currentPrice : this.item.startPrice;
+          this.inputPrice = this.item.currentPrice? this.item.currentPrice+this.item.nextBid : this.item.startPrice+this.item.nextBid;
+        }  
     },
     updated() {
-        let oldTime = localStorage.getItem('pending')
+        let oldTime = localStorage.getItem('pending') || mull
         var currentTime = new Date();
         if((oldTime - currentTime.getTime() )   < 0 || oldTime ==null){
             this.pending = false;
@@ -109,26 +126,24 @@ export default {
         increment: function () {
             this.inputPrice = parseInt(this.inputPrice) + parseInt(this.nextBid);
         },
-        setTooltip: function(latesBid) {
+        setTooltip: function() {
             document.getElementById('bidButton').setAttribute("data-tooltip", "Please Wait For Next Bid")
             document.getElementById('bidButton').setAttribute("disabled", true)
-            this.$socket.emit('user-bid', latestBid)
         },
         bid: async function () {
+            var newTime = new Date();
+            newTime.setSeconds(newTime.getSeconds() + 60);
+            localStorage.setItem('pending',newTime.getTime())
+            this.pending = true;
+            this.setTooltip(latestBid)
             this.currentPrice = parseInt(this.inputPrice)
             let latestBid = {}
             latestBid.user = this.username
             latestBid.price = parseInt(this.currentPrice)
             this.socketBid.userlog.bid = parseInt(this.currentPrice)
-            this.socketBid.userlog.bidAt = Date.now()
-            var newTime = new Date();
-            latestBid.time = newTime
+            this.socketBid.userlog.bidAt = new Date
             this.$socket.emit('user-bid', this.socketBid)
             await postServices.bid(this.id,latestBid.user,latestBid.price)
-            newTime.setSeconds(newTime.getSeconds() + 60);
-            localStorage.setItem('pending',newTime.getTime())
-            this.pending = true;
-            this.setTooltip(latestBid)
         }
     },
     computed:{
@@ -150,7 +165,7 @@ export default {
     }
 
     .disabled{
-        cursor: not-allowed;
+        cursor: not-allowed !important;
         background-color: gray !important;
     }
 
@@ -244,25 +259,30 @@ flex: 70%;
 }
 
 #rtBoxContent{
-    max-height: 500px;
+  max-height: 500px;
   overflow-y: auto;
-  border: 1px solid black;
+  width: 100%;
+  overflow-x: hidden;
+  border: 1px solid rgb(82, 82, 82);
   display: grid;
   justify-content: center;
+  border-radius: 10px 10px 10px 10px;
+  display: inline-block;
 }
 
 .notif-line{
-    background-color: rgba(208, 255, 210, 0.911);
+  background-color: rgba(255, 255, 255, 0.911);
   padding: 2px 2px 0px 0px;
-border-radius: 10px 10px 10px 10px;
-box-shadow: 5px 10px #027011;
-margin: 10px;
-min-width: 100%;
+  margin: 10px;
+  min-width: 100%;
+  display: inline-block;
 }
 
 #rtBox p{
-color: green;
+color: rgb(77, 77, 77);
 font-weight: bold;
+font-size: 15px;
+display: inline;
 }
 
 </style>

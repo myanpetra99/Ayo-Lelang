@@ -15,7 +15,8 @@ export default new Router({
     {
       path: '/',
       name: 'Index',
-      component: Index
+      component: Index,
+      props: true
     },
     {
       path: '/login',
@@ -33,8 +34,9 @@ export default new Router({
       path: '/item/:id',
       name: 'Item',
       component: Item,
+      props: true,
       beforeEnter : (to, from, next) => {
-        if(store.state.auth == false){
+        if( store.state.auth == false  ){
           next('/login')
         }else{
           next()

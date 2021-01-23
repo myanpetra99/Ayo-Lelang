@@ -46,6 +46,7 @@ export default {
        }else{
            this.$cookies.set('TOKEN',token)
         this.$store.dispatch('setAuth')
+        this.$router.push({name : 'Index'})
        }
           
        }
@@ -107,7 +108,7 @@ input {
   border-radius: 0;
   padding: 0;
   cursor: text;
-  
+   margin: 0 1em 0 1em;
 }
 
 input:focus {

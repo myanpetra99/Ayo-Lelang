@@ -15,6 +15,8 @@ class AuthServices{
      static async logout(){
         return await axios.get(url+'logout')
      }
+
+
 }
 
 export default AuthServices;

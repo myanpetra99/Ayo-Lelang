@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import vuex from 'vuex'
 import VueCookies from 'vue-cookies'
+import UserServices from '../../services/UserServices'
+import axios from 'axios'
 
 Vue.use(VueCookies)
 Vue.use(vuex)
@@ -18,14 +20,15 @@ const store = new vuex.Store({
         }
     },
     actions : {
-         setAuth(state){
+         async setAuth({commit}){
           let token = window.$cookies.get('TOKEN') || null
             if(token){
-                state.commit('requestToken', token.data)
+                commit('requestToken', token.data)
             }
             else{
-                state.commit('requestToken', null)
+                commit('requestToken', null)
             }
+            
         },
     },
     getters : {
@@ -34,7 +37,7 @@ const store = new vuex.Store({
         },
         getUser (state){
             return state.user
-        }
+        },
     }
 })
 

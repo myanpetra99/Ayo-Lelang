@@ -49,7 +49,19 @@ export default {
             this.selectedFile = event.target.files[0]
         },
          createNew: async function (){
-          const fd = new FormData();
+
+        this.$swal({
+           icon: "info",
+          title: 'Check',
+          text: 'Are you sure you want to create the event?',
+          showCancelButton: true,
+          confirmButtonText: 'Create',
+          cancelButtonText: 'Cancel',
+          showCloseButton: true,
+          showLoaderOnConfirm: true
+        }).then( async (result) => {
+          if(result.value) {
+              const fd = new FormData();
           let config = {
             header : {
             'accept': 'application/json',
@@ -65,7 +77,14 @@ export default {
           fd.append('nextBid',this.nextBid)
           fd.append('startTime',this.startTime)
           fd.append('endTime',this.endTime)
-          await postServices.createPost(fd, config).then(this.$router.replace('/'))
+          this.$swal('Created', 'You successfully created the event', 'success')
+          await postServices.createPost(fd, config).then( this.$router.replace({name : 'Index'}))
+         
+          }
+        })
+        
+
+       
         },
     },
 }

@@ -5,6 +5,7 @@ const Chatlogs = require('../../models/ChatlogSchema')
 const verifyToken = require('../../middleware/verifyToken')
 const Users = require('../../models/UserSchema')
 const { ObjectId } = require('mongodb')
+const isVerifiedUser = require('../../middleware/isVerifiedUser')
 
 router.get('/post', async (req,res)=>{
    try {
@@ -16,7 +17,7 @@ router.get('/post', async (req,res)=>{
    }
 });
 
-router.get('/post/:id',verifyToken ,async (req,res)=>{
+router.get('/post/:id',verifyToken,async (req,res)=>{
     try {
      const user = await Users.findOne({_id: req.user._id})
      const aPost = await Posts.findOne({_id: req.params.id})
