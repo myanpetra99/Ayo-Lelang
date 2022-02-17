@@ -1,4 +1,4 @@
 # AyoLelang
 
-Auction Real Time Web Platform
+ Real Time Auction Web Platform
 (Under Construction)
